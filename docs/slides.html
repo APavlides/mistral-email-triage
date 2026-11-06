@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ticket triage</title>
+<style>
+  :root { --bg: #f7f7f4; --text: #14141a; --muted: #4b4b57; --accent: #5b2bd9; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; overflow: hidden; }
+  .slide { position: absolute; inset: 0; padding: 7vh 8vw; display: flex; flex-direction: column;
+    justify-content: center; visibility: hidden; }
+  .slide.active { visibility: visible; }
+  h1 { font-size: 72px; line-height: 1.1; margin: 0 0 24px; }
+  h2 { font-size: 56px; line-height: 1.15; margin: 0 0 32px; }
+  h2::after { content: ''; display: block; width: 96px; height: 6px; background: var(--accent); margin-top: 20px; }
+  p, li { font-size: 32px; line-height: 1.4; }
+  p.sub { font-size: 36px; color: var(--muted); margin: 0; }
+  ul { margin: 0; padding-left: 1.1em; }
+  li { margin-bottom: 14px; }
+  li::marker { color: var(--accent); }
+  .cue { font-size: 96px; font-weight: 700; color: var(--accent); margin: 0 0 16px; }
+  .flow { font-size: 24px; color: var(--muted); margin-top: 16px; }
+  .mermaid { font-size: 28px; }
+  .counter { position: fixed; right: 24px; bottom: 16px; font-size: 22px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<section class="slide active">
+  <h1>Ticket triage in seconds</h1>
+  <p class="sub">Paste a customer email. Get its category, urgency, a summary and a draft reply.</p>
+</section>
+
+<section class="slide">
+  <h2>The problem</h2>
+  <ul>
+    <li>Every email is read, sorted and answered by hand</li>
+    <li>[their volume] emails a week is [hours] of sorting</li>
+    <li>Urgent emails wait in the same queue as easy ones</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>What we built</h2>
+  <p>A tool that reads a customer email so your agent can reply faster.</p>
+  <ul>
+    <li>Faster first response</li>
+    <li>The same labels every time</li>
+    <li>The agent still decides what to send</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <p class="cue">Live demo</p>
+  <p class="sub">Switch to the app</p>
+</section>
+
+<section class="slide">
+  <h2>How it works</h2>
+  <pre class="mermaid">
+flowchart LR
+  A[You paste an email] --> B[Web page]
+  B --> C[Our server]
+  C --> D[Mistral AI]
+  D --> E[Four labelled fields]
+  </pre>
+  <p class="flow">You paste an email → Web page → Our server → Mistral AI → Four labelled fields</p>
+</section>
+
+<section class="slide">
+  <h2>Honest limits</h2>
+  <ul>
+    <li>One email at a time, for now</li>
+    <li>A person reviews the draft reply</li>
+    <li>Not yet tested on your real emails</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>Next steps</h2>
+  <ul>
+    <li>2 to 4 week pilot on your real emails</li>
+    <li>Connect to your inbox or helpdesk</li>
+    <li>Add login, monitoring and cost limits</li>
+  </ul>
+</section>
+
+<div class="counter" id="counter"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const counter = document.getElementById('counter');
+  let i = 0;
+
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    counter.textContent = (i + 1) + ' / ' + slides.length;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); show(i + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); show(i - 1); }
+  });
+
+  show(0);
+
+  // If Mermaid fails to load, the plain-text flow under the diagram still shows
+  if (window.mermaid) {
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', flowchart: { useMaxWidth: true } });
+  }
+</script>
+</body>
+</html>
